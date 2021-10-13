@@ -5,6 +5,7 @@ use log::debug;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use crate::evdev::Key;
 
 pub const INITIAL_DEVS_AVAILABLE_FOR: Duration = Duration::from_millis(1000);
 
@@ -75,9 +76,9 @@ impl EvDevs {
         for evdev_path in event_file_paths {
             let dev = evdev::Device::open(&evdev_path)
                 .unwrap_or_else(|_| panic!("Failed to scan {:?}", &evdev_path));
-            if dev.events_supported().contains(evdev::Types::KEY) {
-                if dev.keys_supported().contains(evdev::BTN_STYLUS as usize)
-                    && dev.events_supported().contains(evdev::Types::ABSOLUTE)
+            if dev.supported_events().contains(evdev::EventType::KEY) {
+                if dev.supported_keys().map_or(false, |c| c.contains(evdev::Key::BTN_STYLUS))
+                    && dev.supported_events().contains(evdev::EventType::ABSOLUTE)
                 {
                     // The device with the wacom digitizer has the BTN_STYLUS event
                     // and support KEY as well as ABSOLUTE event types
@@ -86,7 +87,7 @@ impl EvDevs {
                     continue;
                 }
 
-                if dev.keys_supported().contains(evdev::KEY_POWER as usize) {
+                if dev.supported_keys().map_or(false, |c| c.contains(evdev::Key::KEY_POWER)) {
                     // The device for buttons has the KEY_POWER button and support KEY event types
                     gpio_path = Some(evdev_path.clone());
                     gpio_dev = Some(dev);
@@ -94,10 +95,10 @@ impl EvDevs {
                 }
             }
 
-            if dev.events_supported().contains(evdev::Types::RELATIVE)
+            if dev.supported_events().contains(evdev::EventType::RELATIVE)
                 && dev
-                    .absolute_axes_supported()
-                    .contains(evdev::AbsoluteAxis::ABS_MT_SLOT)
+                    .supported_absolute_axes()
+                    .map_or(false, |c| c.contains(evdev::AbsoluteAxisType::ABS_MT_SLOT))
             {
                 // The touchscreen device has the ABS_MT_SLOT event and supports RELATIVE event types
                 multitouch_path = Some(evdev_path.clone());
@@ -124,10 +125,10 @@ impl EvDevs {
         let gpio_dev = gpio_dev.unwrap();
 
         // SIZES
-        let wacom_state = wacom_dev.state();
+        let wacom_state = wacom_dev.cached_state();
         let wacom_orig_size = Vector2 {
-            x: wacom_state.abs_vals[ecodes::ABS_X as usize].maximum as u16,
-            y: wacom_state.abs_vals[ecodes::ABS_Y as usize].maximum as u16,
+            x: wacom_state.abs_vals().unwrap()[ecodes::ABS_X as usize].maximum as u16,
+            y: wacom_state.abs_vals().unwrap()[ecodes::ABS_Y as usize].maximum as u16,
         };
         // X and Y are swapped for the wacom since rM1 and probably also rM2 have it rotated
         let (wacom_width, wacom_height) = crate::device::CURRENT_DEVICE
@@ -136,10 +137,10 @@ impl EvDevs {
             .rotated_size(&wacom_orig_size)
             .into();
 
-        let mt_state = multitouch_dev.state();
+        let mt_state = multitouch_dev.cached_state();
         let multitouch_orig_size = Vector2 {
-            x: mt_state.abs_vals[ecodes::ABS_MT_POSITION_X as usize].maximum as u16,
-            y: mt_state.abs_vals[ecodes::ABS_MT_POSITION_Y as usize].maximum as u16,
+            x: mt_state.abs_vals().unwrap()[ecodes::ABS_MT_POSITION_X as usize].maximum as u16,
+            y: mt_state.abs_vals().unwrap()[ecodes::ABS_MT_POSITION_Y as usize].maximum as u16,
         };
         // Axes are swapped on the rM2 (see InputDeviceRotation for more)
         let (mt_width, mt_height) = crate::device::CURRENT_DEVICE
@@ -208,7 +209,7 @@ impl EvDevs {
         let mut resuable_device = dev_arc.lock().unwrap();
         if resuable_device.is_some() {
             let mut resuable_device = resuable_device.take().unwrap();
-            resuable_device.events_no_sync()?; // Clear events until now
+            resuable_device.fetch_events()?; // Clear events until now
             Ok(resuable_device)
         } else {
             evdev::Device::open(self.get_path(device))
