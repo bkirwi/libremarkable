@@ -49,25 +49,24 @@ pub const FBIOPUTCMAP: NativeWidthType = 0x4605;
 pub const FBIOPAN_DISPLAY: NativeWidthType = 0x4606;
 pub const FBIO_CURSOR: NativeWidthType = 0x4608;
 
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub enum color {
-    BLACK,
-    RED,
-    GREEN,
-    BLUE,
-    WHITE,
-    NATIVE_COMPONENTS(u8, u8),
-    RGB(u8, u8, u8),
-    GRAY(u8),
-}
+pub type color = Color;
 
-impl color {
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Color(pub [u8; 2]);
+
+impl Color {
+    pub const BLACK: Color = Color([0x00, 0x00]);
+    pub const RED: Color = Color([0x07, 0xE0]);
+    pub const GREEN: Color = Color([0x00, 0x1F]);
+    pub const BLUE: Color = Color([0xF8, 0x00]);
+    pub const WHITE: Color = Color([0xFF, 0xFF]);
+
     pub fn from_native(c: [u8; 2]) -> color {
-        color::NATIVE_COMPONENTS(c[0], c[1])
+        Color(c)
     }
 
-    pub fn to_rgb565(self) -> [u8; 2] {
-        self.as_native()
+    pub fn as_native(self) -> [u8; 2] {
+        self.0
     }
 
     pub fn to_rgb8(self) -> [u8; 3] {
@@ -85,21 +84,7 @@ impl color {
     }
 
     #[inline]
-    pub fn as_native(self) -> [u8; 2] {
-        match self {
-            color::BLACK => [0x00, 0x00],
-            color::RED => [0x07, 0xE0],
-            color::GREEN => [0x00, 0x1F],
-            color::BLUE => [0xF8, 0x00],
-            color::WHITE => [0xFF, 0xFF],
-            color::GRAY(level) => color::rgb_to_native(255 - level, 255 - level, 255 - level),
-            color::NATIVE_COMPONENTS(c1, c2) => [c1, c2],
-            color::RGB(r8, g8, b8) => color::rgb_to_native(r8, g8, b8),
-        }
-    }
-
-    #[inline]
-    fn rgb_to_native(r8: u8, g8: u8, b8: u8) -> [u8; 2] {
+    pub fn rgb(r8: u8, g8: u8, b8: u8) -> Color {
         // Split out to avoid making as_native appear recursive
 
         // Simply can be referred to as `rgb565_le`
@@ -112,10 +97,15 @@ impl color {
         let g6 = (u16::from(g8) >> 2) as u8;
         let b5 = (u16::from(b8) >> 3) as u8;
 
-        [
+        Color([
             (((g6 & 0b00_0111) << 5) | b5),
             ((r5 << 3) | ((g6 & 0b11_1000) >> 3)),
-        ]
+        ])
+    }
+
+    #[inline]
+    pub fn gray(level: u8) -> Color {
+        Color::rgb(255 - level, 255 - level, 255 - level)
     }
 }
 

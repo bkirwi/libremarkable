@@ -14,7 +14,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
             let pixel_pos = pos + vec2(x as i32, y as i32);
             self.write_pixel(
                 pixel_pos.cast().unwrap(),
-                color::RGB(pixel.data[0], pixel.data[1], pixel.data[2]),
+                color::rgb(pixel.data[0], pixel.data[1], pixel.data[2]),
             );
         }
         mxcfb_rect {
@@ -189,7 +189,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
                             x: (x + bounding_box.min.x as u32) as i32,
                             y: (y + bounding_box.min.y as u32) as i32,
                         },
-                        color::RGB((c1 * mult) as u8, (c2 * mult) as u8, (c3 * mult) as u8),
+                        color::rgb((c1 * mult) as u8, (c2 * mult) as u8, (c3 * mult) as u8),
                     )
                 });
             }

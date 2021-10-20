@@ -100,7 +100,7 @@ pub fn lua_draw_text(
             },
             stext,
             nsize as f32,
-            color::GRAY(ncolor as u8),
+            color::gray(ncolor as u8),
             false,
         );
     };
@@ -119,7 +119,7 @@ pub fn lua_set_pixel(y: hlua::AnyLuaValue, x: hlua::AnyLuaValue, color: hlua::An
                 x: nx as i32,
                 y: ny as i32,
             },
-            color::GRAY(ncolor as u8),
+            color::gray(ncolor as u8),
         );
     }
 }

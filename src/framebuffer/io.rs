@@ -54,7 +54,7 @@ impl<'a> framebuffer::FramebufferIO for framebuffer::core::Framebuffer<'a> {
                 begin.add(curr_index + 1).read_volatile(),
             )
         };
-        framebuffer::common::color::NATIVE_COMPONENTS(c1, c2)
+        framebuffer::common::Color([c1, c2])
     }
 
     fn read_offset(&self, ofst: isize) -> u8 {
