@@ -14,7 +14,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
             let pixel_pos = pos + vec2(x as i32, y as i32);
             self.write_pixel(
                 pixel_pos.cast().unwrap(),
-                color::rgb(pixel.data[0], pixel.data[1], pixel.data[2]),
+                Color::rgb(pixel.data[0], pixel.data[1], pixel.data[2]),
             );
         }
         mxcfb_rect {
@@ -30,7 +30,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         start: Point2<i32>,
         end: Point2<i32>,
         width: u32,
-        v: color,
+        v: Color,
     ) -> mxcfb_rect {
         let stamp = &mut |p| match width {
             1 => self.write_pixel(p, v),
@@ -47,7 +47,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         graphics::stamp_along_line(stamp, start, end).expand(margin)
     }
 
-    fn draw_polygon(&mut self, points: &[cgmath::Point2<i32>], fill: bool, c: color) -> mxcfb_rect {
+    fn draw_polygon(&mut self, points: &[cgmath::Point2<i32>], fill: bool, c: Color) -> mxcfb_rect {
         if fill {
             graphics::fill_polygon(&mut |p| self.write_pixel(p, c), points)
         } else {
@@ -62,7 +62,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         }
     }
 
-    fn draw_circle(&mut self, pos: cgmath::Point2<i32>, rad: u32, v: color) -> mxcfb_rect {
+    fn draw_circle(&mut self, pos: cgmath::Point2<i32>, rad: u32, v: Color) -> mxcfb_rect {
         for (x, y) in line_drawing::BresenhamCircle::new(pos.x, pos.y, rad as i32) {
             self.write_pixel(Point2 { x, y }, v);
         }
@@ -74,7 +74,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         }
     }
 
-    fn fill_circle(&mut self, pos: cgmath::Point2<i32>, rad: u32, v: color) -> mxcfb_rect {
+    fn fill_circle(&mut self, pos: cgmath::Point2<i32>, rad: u32, v: Color) -> mxcfb_rect {
         let rad_square = (rad * rad) as i32;
         let search_distance: i32 = (rad + 1) as i32;
         for y in (-search_distance)..search_distance {
@@ -101,7 +101,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         endpt: Point2<f32>,
         width: f32,
         samples: i32,
-        v: color,
+        v: Color,
     ) -> mxcfb_rect {
         self.draw_dynamic_bezier(
             (startpt, width),
@@ -118,7 +118,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         ctrlpt: (Point2<f32>, f32),
         endpt: (Point2<f32>, f32),
         samples: i32,
-        v: color,
+        v: Color,
     ) -> mxcfb_rect {
         graphics::draw_dynamic_bezier(
             &mut |p| self.write_pixel(p, v),
@@ -134,7 +134,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         pos: Point2<f32>,
         text: String,
         size: f32,
-        col: color,
+        col: Color,
         dryrun: bool,
     ) -> mxcfb_rect {
         let scale = Scale {
@@ -189,7 +189,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
                             x: (x + bounding_box.min.x as u32) as i32,
                             y: (y + bounding_box.min.y as u32) as i32,
                         },
-                        color::rgb((c1 * mult) as u8, (c2 * mult) as u8, (c3 * mult) as u8),
+                        Color::rgb((c1 * mult) as u8, (c2 * mult) as u8, (c3 * mult) as u8),
                     )
                 });
             }
@@ -204,7 +204,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         }
     }
 
-    fn draw_rect(&mut self, pos: Point2<i32>, size: Vector2<u32>, border_px: u32, c: color) {
+    fn draw_rect(&mut self, pos: Point2<i32>, size: Vector2<u32>, border_px: u32, c: Color) {
         let top_left = pos;
         let top_right = pos + vec2(size.x as i32, 0);
         let bottom_left = pos + vec2(0, size.y as i32);
@@ -223,7 +223,7 @@ impl<'a> framebuffer::FramebufferDraw for core::Framebuffer<'a> {
         self.draw_line(bottom_left, bottom_right, border_px, c);
     }
 
-    fn fill_rect(&mut self, pos: Point2<i32>, size: Vector2<u32>, c: color) {
+    fn fill_rect(&mut self, pos: Point2<i32>, size: Vector2<u32>, c: Color) {
         for ypos in pos.y..pos.y + size.y as i32 {
             for xpos in pos.x..pos.x + size.x as i32 {
                 self.write_pixel(

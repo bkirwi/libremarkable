@@ -292,7 +292,7 @@ fn on_touch_rustlogo(app: &mut appctx::ApplicationContext<'_>, _element: UIEleme
         },
         format!("{0}", new_press_count),
         65.0,
-        color::BLACK,
+        Color::BLACK,
         false,
     );
     framebuffer.partial_refresh(
@@ -436,8 +436,8 @@ fn on_wacom_input(app: &mut appctx::ApplicationContext<'_>, input: wacom::WacomE
             }
 
             let (col, mult) = match G_DRAW_MODE.load(Ordering::Relaxed) {
-                DrawMode::Draw(s) => (color::BLACK, s),
-                DrawMode::Erase(s) => (color::WHITE, s * 3),
+                DrawMode::Draw(s) => (Color::BLACK, s),
+                DrawMode::Erase(s) => (Color::WHITE, s * 3),
             };
 
             wacom_stack.push_back((position.cast().unwrap(), pressure as i32));
@@ -542,13 +542,13 @@ fn on_touch_handler(app: &mut appctx::ApplicationContext<'_>, input: multitouch:
                             (position_float + window[1].0, window[1].1),
                             (position_float + window[2].0, window[2].1),
                             100,
-                            color::BLACK,
+                            Color::BLACK,
                         ));
                     }
                     rect
                 }
                 TouchMode::Circles => {
-                    framebuffer.draw_circle(finger.pos.cast().unwrap(), 20, color::BLACK)
+                    framebuffer.draw_circle(finger.pos.cast().unwrap(), 20, Color::BLACK)
                 }
 
                 m @ TouchMode::Diamonds | m @ TouchMode::FillDiamonds => {
@@ -565,7 +565,7 @@ fn on_touch_handler(app: &mut appctx::ApplicationContext<'_>, input: multitouch:
                             TouchMode::FillDiamonds => true,
                             _ => false,
                         },
-                        color::BLACK,
+                        Color::BLACK,
                     )
                 }
                 _ => return,
@@ -686,7 +686,7 @@ fn main() {
             inner: UIElement::Region {
                 size: CANVAS_REGION.size().cast().unwrap() + cgmath::vec2(1, 3),
                 border_px: 2,
-                border_color: color::BLACK,
+                border_color: Color::BLACK,
             },
             ..Default::default()
         },
@@ -700,7 +700,7 @@ fn main() {
 
             onclick: Some(draw_color_test_rgb),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Show RGB Test Image".to_owned(),
                 scale: 35.0,
                 border_px: 3,
@@ -718,7 +718,7 @@ fn main() {
 
             onclick: Some(on_zoom_out),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Zoom Out".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -735,7 +735,7 @@ fn main() {
 
             onclick: Some(on_blur_canvas),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Blur".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -752,7 +752,7 @@ fn main() {
 
             onclick: Some(on_invert_canvas),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Invert".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -770,7 +770,7 @@ fn main() {
 
             onclick: Some(on_save_canvas),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Save".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -787,7 +787,7 @@ fn main() {
 
             onclick: Some(on_load_canvas),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Load".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -805,7 +805,7 @@ fn main() {
 
             onclick: Some(on_change_touchdraw_mode),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Touch Mode".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -821,7 +821,7 @@ fn main() {
 
             onclick: None,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "None".to_owned(),
                 scale: 40.0,
                 border_px: 0,
@@ -839,7 +839,7 @@ fn main() {
 
             onclick: Some(on_toggle_eraser),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Draw Color".to_owned(),
                 scale: 45.0,
                 border_px: 5,
@@ -855,7 +855,7 @@ fn main() {
 
             onclick: None,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: G_DRAW_MODE.load(Ordering::Relaxed).color_as_string(),
                 scale: 40.0,
                 border_px: 0,
@@ -874,7 +874,7 @@ fn main() {
                 change_brush_width(appctx, -10);
             }),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "--".to_owned(),
                 scale: 90.0,
                 border_px: 5,
@@ -891,7 +891,7 @@ fn main() {
                 change_brush_width(appctx, -1);
             }),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "-".to_owned(),
                 scale: 90.0,
                 border_px: 5,
@@ -905,7 +905,7 @@ fn main() {
             position: cgmath::Point2 { x: 1080, y: 670 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: format!("size: {0}", G_DRAW_MODE.load(Ordering::Relaxed).get_size()),
                 scale: 45.0,
                 border_px: 0,
@@ -922,7 +922,7 @@ fn main() {
                 change_brush_width(appctx, 1);
             }),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "+".to_owned(),
                 scale: 60.0,
                 border_px: 5,
@@ -939,7 +939,7 @@ fn main() {
                 change_brush_width(appctx, 10);
             }),
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "++".to_owned(),
                 scale: 60.0,
                 border_px: 5,
@@ -956,7 +956,7 @@ fn main() {
 
             onclick: None,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Press POWER to return to reMarkable".to_owned(),
                 scale: 35.0,
                 border_px: 0,
@@ -970,7 +970,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 620 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Available at:".to_owned(),
                 scale: 70.0,
                 border_px: 0,
@@ -984,7 +984,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 690 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "github.com/canselcik/libremarkable".to_owned(),
                 scale: 55.0,
                 border_px: 0,
@@ -998,7 +998,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 350 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Low Latency eInk Display Partial Refresh API".to_owned(),
                 scale: 45.0,
                 border_px: 0,
@@ -1012,7 +1012,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 400 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Capacitive Multitouch Input Support".to_owned(),
                 scale: 45.0,
                 border_px: 0,
@@ -1026,7 +1026,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 450 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Physical Button Support".to_owned(),
                 scale: 45.0,
                 border_px: 0,
@@ -1040,7 +1040,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 500 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Wacom Digitizer Support".to_owned(),
                 scale: 45.0,
                 border_px: 0,
@@ -1056,7 +1056,7 @@ fn main() {
             refresh: UIConstraintRefresh::Refresh,
             onclick: None,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Quick Redraw".to_owned(), // maybe quick redraw for the demo or waveform change?
                 scale: 50.0,
                 border_px: 0,
@@ -1070,7 +1070,7 @@ fn main() {
             position: cgmath::Point2 { x: 565, y: 1850 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Full Redraw".to_owned(),
                 scale: 50.0,
                 border_px: 0,
@@ -1084,7 +1084,7 @@ fn main() {
             position: cgmath::Point2 { x: 1112, y: 1850 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: "Disable Touch".to_owned(),
                 scale: 50.0,
                 border_px: 0,
@@ -1101,7 +1101,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 215 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: format!(
                     "{0:<128}",
                     format!(
@@ -1122,7 +1122,7 @@ fn main() {
             position: cgmath::Point2 { x: 30, y: 150 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
-                foreground: color::BLACK,
+                foreground: Color::BLACK,
                 text: format!("{}", dt.format("%F %r")),
                 scale: 75.0,
                 border_px: 0,

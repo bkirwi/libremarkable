@@ -151,7 +151,7 @@ impl<'a> ApplicationContext<'a> {
     pub fn display_text(
         &mut self,
         position: cgmath::Point2<f32>,
-        c: color,
+        c: Color,
         scale: f32,
         border_px: u32,
         border_padding: u32,
@@ -197,7 +197,7 @@ impl<'a> ApplicationContext<'a> {
         position: cgmath::Point2<i32>,
         size: cgmath::Vector2<u32>,
         border_px: u32,
-        border_color: color,
+        border_color: Color,
         refresh: UIConstraintRefresh,
     ) -> mxcfb_rect {
         let framebuffer = self.get_framebuffer_ref();
@@ -320,7 +320,7 @@ impl<'a> ApplicationContext<'a> {
         if let Some(locked_element) = self.get_element_by_name(name) {
             let mut element = locked_element.write();
             if let Some(rect) = element.last_drawn_rect {
-                framebuffer.fill_rect(rect.top_left().cast().unwrap(), rect.size(), color::BLACK);
+                framebuffer.fill_rect(rect.top_left().cast().unwrap(), rect.size(), Color::BLACK);
                 framebuffer.partial_refresh(
                     &rect,
                     PartialRefreshMode::Wait,

@@ -3,7 +3,7 @@ use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 use crate::framebuffer::cgmath;
 use crate::framebuffer::common;
-use crate::framebuffer::common::{color, mxcfb_rect};
+use crate::framebuffer::common::{Color, mxcfb_rect};
 use crate::framebuffer::refresh::PartialRefreshMode;
 use crate::framebuffer::FramebufferDraw;
 use crate::framebuffer::FramebufferRefresh;
@@ -81,7 +81,7 @@ pub enum UIElement {
     Text {
         text: String,
         scale: f32,
-        foreground: color,
+        foreground: Color,
         border_px: u32,
     },
     Image {
@@ -89,7 +89,7 @@ pub enum UIElement {
     },
     Region {
         size: cgmath::Vector2<u32>,
-        border_color: color,
+        border_color: Color,
         border_px: u32,
     },
     Unspecified,
@@ -121,7 +121,7 @@ impl UIElementWrapper {
         let old_filled_rect = match self.last_drawn_rect {
             Some(rect) => {
                 // Clear the background on the last occupied region
-                framebuffer.fill_rect(rect.top_left().cast().unwrap(), rect.size(), color::WHITE);
+                framebuffer.fill_rect(rect.top_left().cast().unwrap(), rect.size(), Color::WHITE);
 
                 // We have filled the old_filled_rect, now we need to also refresh that but if
                 // only if it isn't at the same spot. Otherwise we will be refreshing it for no
