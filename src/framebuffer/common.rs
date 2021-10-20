@@ -49,10 +49,11 @@ pub const FBIOPUTCMAP: NativeWidthType = 0x4605;
 pub const FBIOPAN_DISPLAY: NativeWidthType = 0x4606;
 pub const FBIO_CURSOR: NativeWidthType = 0x4608;
 
-pub type color = Color;
-
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Color(pub [u8; 2]);
+
+#[deprecated(since="0.5.0", note="Please use Color (uppercase) instead.")]
+pub type color = Color;
 
 impl Color {
     pub const BLACK: Color = Color([0x00, 0x00]);
@@ -61,7 +62,7 @@ impl Color {
     pub const BLUE: Color = Color([0xF8, 0x00]);
     pub const WHITE: Color = Color([0xFF, 0xFF]);
 
-    pub fn from_native(c: [u8; 2]) -> color {
+    pub fn from_native(c: [u8; 2]) -> Color {
         Color(c)
     }
 
@@ -107,11 +108,26 @@ impl Color {
     pub fn gray(level: u8) -> Color {
         Color::rgb(255 - level, 255 - level, 255 - level)
     }
+
+    #[deprecated(since="0.5.0", note="Please use Color::gray instead.")]
+    pub fn GRAY(level: u8) -> Color {
+        Color::gray(level)
+    }
+
+    #[deprecated(since="0.5.0", note="Please use Color::from_native instead.")]
+    pub fn NATIVE_COMPONENTS(a: u8, b: u8) -> Color {
+        Color([a, b])
+    }
+
+    #[deprecated(since="0.5.0", note="Please use Color::rgb instead.")]
+    pub fn RGB(r: u8, g: u8, b: u8) -> Color {
+        Color::rgb(r, g, b)
+    }
 }
 
-impl ::std::default::Default for color {
+impl ::std::default::Default for Color {
     fn default() -> Self {
-        color::WHITE
+        Color::WHITE
     }
 }
 
