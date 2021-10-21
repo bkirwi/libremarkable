@@ -110,16 +110,19 @@ impl Color {
     }
 
     #[deprecated(since="0.5.0", note="Please use Color::gray instead.")]
+    #[allow(non_snake_case)]
     pub fn GRAY(level: u8) -> Color {
         Color::gray(level)
     }
 
     #[deprecated(since="0.5.0", note="Please use Color::from_native instead.")]
+    #[allow(non_snake_case)]
     pub fn NATIVE_COMPONENTS(a: u8, b: u8) -> Color {
         Color([a, b])
     }
 
     #[deprecated(since="0.5.0", note="Please use Color::rgb instead.")]
+    #[allow(non_snake_case)]
     pub fn RGB(r: u8, g: u8, b: u8) -> Color {
         Color::rgb(r, g, b)
     }
